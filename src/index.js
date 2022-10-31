@@ -1,6 +1,7 @@
 import './css/styles.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import debounce from 'lodash.debounce';
+import { createMarkUp, createMarkUpPreInfo } from "./createMarkup";
 // import { fetchByName } from "./fetchCountries";
 const url = 'https://restcountries.com/v3.1/name/'
 
@@ -30,12 +31,12 @@ function fetchByName(name) {
       .then(data => {
 
       if (data.length === 1) {
-        createMarkUp(data)
+        renderFullData(data)
         return
       }
       if (data.length >= 2 && data.length <= 10) {
      clearHTML()
-        createMarkUpPreInfo(data)
+     renderPreData(data)
         return
       }
       if (data.length > 10) {
@@ -52,45 +53,18 @@ function fetchByName(name) {
        clearHTML()
       });
 }
-function createMarkUp(data) {
-  data.map(({capital, population,languages,flags,name})=>{
-    
-    const markUp =  `<li>
-    <div class="flex">
-    <img
-        class="country-list__flag"
-        src="${flags.svg}"
-        width="30px"
-        height="20px"
-      />
-    <h1>${name.official}</h1>
-    </div>
-    <p class="bold">Capital:${capital}</p>
-    <p class="bold">Population${population}</p>
-    <p class="bold">Languages${languages.official}</p>
-  </li>`;
-    refs.ulRef.innerHTML = name.official;
-    refs.ulRef.innerHTML = markUp;
-       
 
-  })
-}
-function createMarkUpPreInfo(data) {
-    data.map(({flags,name})=>{
-      const markUp =  `<li class="flex">
-      <img
-        class="country-list__flag"
-        src="${flags.svg}"
-        width="30px"
-        height="20px"
-      />
-      <p>${name.official}</p>
-    </li>`;
-      refs.ulRef.insertAdjacentHTML('beforeend',markUp)
-         
-  
-    })
-  }
+
+function renderFullData(data) {
+        const markUp = data.map(createMarkUp).join('')
+        refs.ulRef.innerHTML = markUp;
+    }
+
+ function renderPreData(data) {
+     const markup = data.map(createMarkUpPreInfo).join('')
+     refs.ulRef.insertAdjacentHTML('beforeend',markup)
+     
+ }   
   function clearHTML(e) {
     refs.ulRef.innerHTML = ''
   }
